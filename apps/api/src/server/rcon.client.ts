@@ -39,6 +39,8 @@ export class RconClient implements OnModuleInit {
   }
 
   getServerInfo(): Promise<GameDigResponse> {
+    console.log(this.client.host);
+
     return Gamedig.query({
       type: "csgo",
       host: this.client.host,

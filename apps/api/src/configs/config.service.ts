@@ -29,6 +29,7 @@ export class ConfigService implements OnModuleInit {
   public async onModuleInit() {
     try {
       await stat(DATA_FOLDER);
+      await stat(join(DATA_FOLDER, `config.json`));
     } catch (err) {
       this.logger.debug(
         "Data directory does not exist. Creating initial setup."
