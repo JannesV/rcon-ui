@@ -4,7 +4,6 @@ import { join } from "path";
 import { cwd } from "process";
 
 const DATA_FOLDER = join(cwd(), "data");
-const CONFIGS_FOLDER = join(DATA_FOLDER, "configs");
 
 export class Config {
   name: string;
@@ -35,17 +34,16 @@ export class ConfigService implements OnModuleInit {
         "Data directory does not exist. Creating initial setup."
       );
       await mkdir(DATA_FOLDER, { recursive: true });
-      await mkdir(CONFIGS_FOLDER, { recursive: true });
 
       await writeFile(
-        join(CONFIGS_FOLDER, "config.json"),
+        join(DATA_FOLDER, "config.json"),
         JSON.stringify(EMPTY_CONFIG)
       );
     }
   }
 
   public async getConfig(): Promise<Config> {
-    const path = join(CONFIGS_FOLDER, `config.json`);
+    const path = join(DATA_FOLDER, `config.json`);
 
     const config = JSON.parse(await readFile(path, "utf8")) as Config;
 
