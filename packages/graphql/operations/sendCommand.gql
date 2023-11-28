@@ -1,0 +1,5 @@
+mutation sendCommand($command: String!) {
+  sendCommand(command: $command) {
+    text
+  }
+}

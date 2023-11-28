@@ -1,0 +1,8 @@
+subscription serverInfo {
+  serverInfo {
+    name
+    map
+    maxPlayers
+    currentPlayers
+  }
+}

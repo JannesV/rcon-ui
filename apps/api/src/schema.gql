@@ -1,0 +1,27 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type RconResponse {
+  text: String!
+}
+
+type ServerInfo {
+  name: String!
+  map: String!
+  maxPlayers: Float!
+  currentPlayers: Float!
+}
+
+type Query {
+  serverInfo: ServerInfo!
+}
+
+type Mutation {
+  sendCommand(command: String!): RconResponse!
+}
+
+type Subscription {
+  log: RconResponse!
+  serverInfo: ServerInfo!
+}

@@ -1,0 +1,8 @@
+query getServerInfo {
+  serverInfo {
+    name
+    map
+    currentPlayers
+    maxPlayers
+  }
+}

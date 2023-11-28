@@ -1,0 +1,56 @@
+diff --git a/node_modules/rcon-srcds/.DS_Store b/node_modules/rcon-srcds/.DS_Store
+new file mode 100644
+index 0000000..fdcb831
+Binary files /dev/null and b/node_modules/rcon-srcds/.DS_Store differ
+diff --git a/node_modules/rcon-srcds/dist/protocol.d.ts b/node_modules/rcon-srcds/dist/protocol.d.ts
+index 2632a52..c5d73dc 100644
+--- a/node_modules/rcon-srcds/dist/protocol.d.ts
++++ b/node_modules/rcon-srcds/dist/protocol.d.ts
+@@ -11,5 +11,6 @@ declare const protocol: Readonly<{
+     SERVERDATA_RESPONSE_VALUE: number;
+     ID_AUTH: number;
+     ID_REQUEST: number;
++    ID_TERM: number;
+ }>;
+ export default protocol;
+diff --git a/node_modules/rcon-srcds/dist/protocol.js b/node_modules/rcon-srcds/dist/protocol.js
+index 2288c0e..ec2899f 100644
+--- a/node_modules/rcon-srcds/dist/protocol.js
++++ b/node_modules/rcon-srcds/dist/protocol.js
+@@ -12,6 +12,7 @@ var protocol = Object.freeze({
+     SERVERDATA_AUTH_RESPONSE: 0x02,
+     SERVERDATA_RESPONSE_VALUE: 0x00,
+     ID_AUTH: 0x999,
+-    ID_REQUEST: 0x123
++    ID_REQUEST: 0x123,
++    ID_TERM: 0x777
+ });
+ exports.default = protocol;
+diff --git a/node_modules/rcon-srcds/dist/rcon.js b/node_modules/rcon-srcds/dist/rcon.js
+index 30d09b5..86652e2 100644
+--- a/node_modules/rcon-srcds/dist/rcon.js
++++ b/node_modules/rcon-srcds/dist/rcon.js
+@@ -208,11 +208,18 @@ var RCON = /** @class */ (function () {
+                     }
+                     _this.connection.removeListener('data', onData);
+                 }
+-                else if (id === decodedPacket.id) {
+-                    response = response.concat(decodedPacket.body.replace(/\n$/, '\n')); // remove last line break
+-                    // Check the response if it's defined rather than if it contains 'command ${body}'
+-                    // Reason for this is because we no longer need to check if it starts with 'command', testing shows it never will
+-                    if (response) {
++                else if (id === decodedPacket.id || decodedPacket.id === protocol_1.default.ID_TERM) {
++                    // don't add the termination packet.
++                    if (decodedPacket.id != protocol_1.default.ID_TERM) {
++                        response = response.concat(decodedPacket.body.replace(/\n$/, '\n')); // remove last line break
++                    }
++                    // Hack to cope with multipacket responses.
++                    // see https://developer.valvesoftware.com/wiki/Talk:Source_RCON_Protocol#How_to_receive_split_response?
++                    if (decodedPacket.size > 3700) {
++                        var encodedTerminationPacket = packets.encode(protocol_1.default.SERVERDATA_RESPONSE_VALUE, protocol_1.default.ID_TERM, '');
++                        _this.connection.write(encodedTerminationPacket);
++                    }
++                    else if (decodedPacket.size <= 3700) { // no need to check for ID_TERM here, since this packet will always be < 3700
+                         _this.connection.removeListener('data', onData);
+                         resolve(response);
+                     }
