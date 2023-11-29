@@ -7,11 +7,13 @@ import { ConfigModule } from "./configs/config.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { ScheduleModule } from "@nestjs/schedule";
 import { ServerModule } from "./server/server.module";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Module({
   imports: [
     ConfigModule,
     ServerModule,
+    EventEmitterModule.forRoot(),
     ScheduleModule.forRoot(),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

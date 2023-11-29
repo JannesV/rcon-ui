@@ -22,11 +22,11 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Config",
+        "name": "Command",
         "description": null,
         "fields": [
           {
-            "name": "name",
+            "name": "command",
             "description": null,
             "args": [],
             "type": {
@@ -37,6 +37,30 @@
                 "name": "String",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "description",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "value",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -107,11 +131,11 @@
         "description": null,
         "fields": [
           {
-            "name": "config",
+            "name": "commands",
             "description": null,
             "args": [
               {
-                "name": "configName",
+                "name": "search",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -131,22 +155,6 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "OBJECT",
-                "name": "Config",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "configs",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
                 "kind": "LIST",
                 "name": null,
                 "ofType": {
@@ -154,7 +162,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "Config",
+                    "name": "Command",
                     "ofType": null
                   }
                 }

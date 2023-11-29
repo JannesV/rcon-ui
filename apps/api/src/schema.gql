@@ -13,8 +13,15 @@ type ServerInfo {
   currentPlayers: Float!
 }
 
+type Command {
+  command: String!
+  value: String
+  description: String
+}
+
 type Query {
   serverInfo: ServerInfo!
+  commands(search: String!): [Command!]!
 }
 
 type Mutation {

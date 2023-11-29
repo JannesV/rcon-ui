@@ -1,0 +1,7 @@
+query getCommands($search: String!) {
+  commands(search: $search) {
+    command
+    value
+    description
+  }
+}

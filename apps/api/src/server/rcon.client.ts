@@ -8,12 +8,16 @@ import {} from "rc";
 import { GameDigResponse } from "src/types/gamedig";
 import { pubSub } from "src/utils/pubSub";
 import { ConfigService } from "src/configs/config.service";
+import { EventEmitter2 } from "@nestjs/event-emitter";
 
 @Injectable()
 export class RconClient implements OnModuleInit {
   private client: Rcon;
 
-  constructor(private configService: ConfigService) {}
+  constructor(
+    private configService: ConfigService,
+    private eventEmitter: EventEmitter2
+  ) {}
   async onModuleInit() {
     try {
       const { rcon_ip, rcon_password, rcon_port } =
@@ -26,8 +30,29 @@ export class RconClient implements OnModuleInit {
 
       await this.client.authenticate(rcon_password);
 
+      let oldText = "";
+
       this.client.connection.on("data", (data) => {
-        pubSub.publish("log", { log: { text: decode(data).body } });
+        const text = decode(data).body;
+
+        if (text.startsWith("cvar list")) {
+          oldText += text;
+        }
+
+        if (
+          text.includes("total convars/concommands") ||
+          text.includes("convars/concommands for [")
+        ) {
+          if (!text.startsWith("cvar list")) {
+            oldText += text;
+          }
+          this.eventEmitter.emit("cvarlist", oldText);
+          oldText = "";
+        } else if (oldText) {
+          oldText += text;
+        } else if (!oldText) {
+          pubSub.publish("log", { log: { text } });
+        }
       });
     } catch (err) {
       throw new Error("Error connecting to RCON Service");
@@ -35,12 +60,10 @@ export class RconClient implements OnModuleInit {
   }
 
   public async sendCommand(command: string) {
-    return this.client.execute(command);
+    return (await this.client.execute(command)).toString();
   }
 
   getServerInfo(): Promise<GameDigResponse> {
-    console.log(this.client.host);
-
     return Gamedig.query({
       type: "csgo",
       host: this.client.host,

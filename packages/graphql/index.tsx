@@ -17,9 +17,11 @@ export type Scalars = {
   Float: number;
 };
 
-export type Config = {
-  __typename?: 'Config';
-  name: Scalars['String'];
+export type Command = {
+  __typename?: 'Command';
+  command: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
+  value?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -34,14 +36,13 @@ export type MutationSendCommandArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  config: Config;
-  configs: Array<Config>;
+  commands: Array<Command>;
   serverInfo: ServerInfo;
 };
 
 
-export type QueryConfigArgs = {
-  configName: Scalars['String'];
+export type QueryCommandsArgs = {
+  search: Scalars['String'];
 };
 
 export type RconResponse = {
@@ -63,12 +64,12 @@ export type Subscription = {
   serverInfo: ServerInfo;
 };
 
-export type GetConfigQueryVariables = Exact<{
-  configName: Scalars['String'];
+export type GetCommandsQueryVariables = Exact<{
+  search: Scalars['String'];
 }>;
 
 
-export type GetConfigQuery = { __typename?: 'Query', config: { __typename?: 'Config', name: string } };
+export type GetCommandsQuery = { __typename?: 'Query', commands: Array<{ __typename?: 'Command', command: string, value?: string | null, description?: string | null }> };
 
 export type GetServerInfoQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -93,41 +94,43 @@ export type ServerInfoSubscriptionVariables = Exact<{ [key: string]: never; }>;
 export type ServerInfoSubscription = { __typename?: 'Subscription', serverInfo: { __typename?: 'ServerInfo', name: string, map: string, maxPlayers: number, currentPlayers: number } };
 
 
-export const GetConfigDocument = gql`
-    query getConfig($configName: String!) {
-  config(configName: $configName) {
-    name
+export const GetCommandsDocument = gql`
+    query getCommands($search: String!) {
+  commands(search: $search) {
+    command
+    value
+    description
   }
 }
     `;
 
 /**
- * __useGetConfigQuery__
+ * __useGetCommandsQuery__
  *
- * To run a query within a React component, call `useGetConfigQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetConfigQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetCommandsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCommandsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetConfigQuery({
+ * const { data, loading, error } = useGetCommandsQuery({
  *   variables: {
- *      configName: // value for 'configName'
+ *      search: // value for 'search'
  *   },
  * });
  */
-export function useGetConfigQuery(baseOptions: Apollo.QueryHookOptions<GetConfigQuery, GetConfigQueryVariables>) {
+export function useGetCommandsQuery(baseOptions: Apollo.QueryHookOptions<GetCommandsQuery, GetCommandsQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetConfigQuery, GetConfigQueryVariables>(GetConfigDocument, options);
+        return Apollo.useQuery<GetCommandsQuery, GetCommandsQueryVariables>(GetCommandsDocument, options);
       }
-export function useGetConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetConfigQuery, GetConfigQueryVariables>) {
+export function useGetCommandsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommandsQuery, GetCommandsQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetConfigQuery, GetConfigQueryVariables>(GetConfigDocument, options);
+          return Apollo.useLazyQuery<GetCommandsQuery, GetCommandsQueryVariables>(GetCommandsDocument, options);
         }
-export type GetConfigQueryHookResult = ReturnType<typeof useGetConfigQuery>;
-export type GetConfigLazyQueryHookResult = ReturnType<typeof useGetConfigLazyQuery>;
-export type GetConfigQueryResult = Apollo.QueryResult<GetConfigQuery, GetConfigQueryVariables>;
+export type GetCommandsQueryHookResult = ReturnType<typeof useGetCommandsQuery>;
+export type GetCommandsLazyQueryHookResult = ReturnType<typeof useGetCommandsLazyQuery>;
+export type GetCommandsQueryResult = Apollo.QueryResult<GetCommandsQuery, GetCommandsQueryVariables>;
 export const GetServerInfoDocument = gql`
     query getServerInfo {
   serverInfo {

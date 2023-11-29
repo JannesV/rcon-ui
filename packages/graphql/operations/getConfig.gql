@@ -1,5 +1,0 @@
-query getConfig($configName: String!) {
-  config(configName: $configName) {
-    name
-  }
-}

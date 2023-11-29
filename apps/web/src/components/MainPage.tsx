@@ -15,14 +15,32 @@ import {
   CardBody,
   CardHeader,
   Heading,
+  Text,
+  Tag,
 } from "@chakra-ui/react";
+
+import {
+  AutoComplete,
+  AutoCompleteInput,
+  AutoCompleteItem,
+  AutoCompleteList,
+} from "@choc-ui/chakra-autocomplete";
 import {
   ServerInfoDocument,
+  useGetCommandsQuery,
   useGetServerInfoQuery,
   useLogSubscription,
   useSendCommandMutation,
 } from "@dashboardarr/graphql";
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  FC,
+  KeyboardEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { IoMdSend } from "react-icons/io";
 
 export const MainPage: FC = () => {
@@ -34,6 +52,13 @@ export const MainPage: FC = () => {
   const consoleRef = useRef<HTMLDivElement>(null);
   const { subscribeToMore, data: serverInfoData } = useGetServerInfoQuery({});
   const [sendCommand, { loading }] = useSendCommandMutation();
+
+  const { data: { commands } = { commands: [] }, loading: commandsLoading } =
+    useGetCommandsQuery({
+      variables: { search: command.replace(/ .*/, "") },
+      skip: !command,
+      fetchPolicy: "no-cache",
+    });
 
   const { data } = useLogSubscription({
     variables: {},
@@ -66,11 +91,12 @@ export const MainPage: FC = () => {
   }, [subscribeToMore]);
 
   const handleSend = useCallback(async () => {
-    const response = await sendCommand({ variables: { command } });
-
+    await sendCommand({ variables: { command } });
     setCommand("");
-    setLog(log + response.data?.sendCommand.text);
-  }, [command, log, sendCommand]);
+  }, [command, sendCommand]);
+
+  const isValidCommand =
+    commands.filter((c) => command.includes(c.command)).length === 1;
 
   return (
     <Center p={5}>
@@ -119,30 +145,61 @@ export const MainPage: FC = () => {
             >
               {log}
             </Box>
-            <InputGroup>
-              <Input
-                placeholder="command..."
-                value={command}
-                fontFamily="monospace"
-                fontSize="small"
-                onChange={(ev) => setCommand(ev.currentTarget.value)}
-                flex={1}
-                onKeyUp={(e) => {
-                  if (e.key === "Enter") {
-                    handleSend();
+
+            <AutoComplete
+              onSelectOption={({ item }: any) => {
+                setCommand(`${item.value}`);
+              }}
+              isLoading={commandsLoading}
+              shouldRenderSuggestions={() => !isValidCommand || !command}
+            >
+              <InputGroup>
+                <AutoCompleteInput
+                  onChange={(ev: ChangeEvent<HTMLInputElement>) =>
+                    setCommand(ev.currentTarget.value)
                   }
-                }}
-              />
-              <InputRightElement>
-                <IconButton
-                  aria-label="send"
-                  isLoading={loading}
-                  onClick={handleSend}
-                  icon={<IoMdSend />}
-                  size="sm"
+                  placeholder="command..."
+                  value={command}
+                  fontFamily="monospace"
+                  fontSize="small"
+                  onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                    if (isValidCommand && e.key === "Enter") {
+                      handleSend();
+                    }
+                  }}
+                  flex={1}
                 />
-              </InputRightElement>
-            </InputGroup>
+                <InputRightElement>
+                  <IconButton
+                    type="submit"
+                    aria-label="send"
+                    isLoading={loading}
+                    onClick={handleSend}
+                    icon={<IoMdSend />}
+                    size="sm"
+                  />
+                </InputRightElement>
+              </InputGroup>
+
+              <AutoCompleteList>
+                {commands.map((item) => (
+                  <AutoCompleteItem
+                    key={item!.command}
+                    value={item!.command}
+                    align="center"
+                    gap={2}
+                  >
+                    <Text>{item?.command}</Text>
+                    <Tag flexShrink={0} size="sm">
+                      {item?.value}
+                    </Tag>
+                    <Text as="i" fontSize="small" opacity={0.8}>
+                      {item?.description}
+                    </Text>
+                  </AutoCompleteItem>
+                ))}
+              </AutoCompleteList>
+            </AutoComplete>
           </CardBody>
         </Card>
         <Card>
