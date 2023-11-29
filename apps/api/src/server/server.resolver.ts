@@ -13,11 +13,9 @@ export class ServerResolver {
     private rconClient: RconClient,
     private eventEmitter: EventEmitter2
   ) {}
-  @Mutation(() => RconResponse)
-  async sendCommand(@Args("command") command: string): Promise<RconResponse> {
-    return {
-      text: await this.rconClient.sendCommand(command),
-    };
+  @Mutation(() => Boolean)
+  async sendCommand(@Args("command") command: string): Promise<boolean> {
+    return true;
   }
 
   @Subscription(() => RconResponse)

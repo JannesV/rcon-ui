@@ -26,7 +26,7 @@ export type Command = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  sendCommand: RconResponse;
+  sendCommand: Scalars['Boolean'];
 };
 
 
@@ -86,7 +86,7 @@ export type SendCommandMutationVariables = Exact<{
 }>;
 
 
-export type SendCommandMutation = { __typename?: 'Mutation', sendCommand: { __typename?: 'RconResponse', text: string } };
+export type SendCommandMutation = { __typename?: 'Mutation', sendCommand: boolean };
 
 export type ServerInfoSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -199,9 +199,7 @@ export type LogSubscriptionHookResult = ReturnType<typeof useLogSubscription>;
 export type LogSubscriptionResult = Apollo.SubscriptionResult<LogSubscription>;
 export const SendCommandDocument = gql`
     mutation sendCommand($command: String!) {
-  sendCommand(command: $command) {
-    text
-  }
+  sendCommand(command: $command)
 }
     `;
 export type SendCommandMutationFn = Apollo.MutationFunction<SendCommandMutation, SendCommandMutationVariables>;

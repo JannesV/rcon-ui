@@ -60,7 +60,7 @@ export class RconClient implements OnModuleInit {
   }
 
   public async sendCommand(command: string) {
-    return (await this.client.execute(command)).toString();
+    return this.client.execute(command);
   }
 
   getServerInfo(): Promise<GameDigResponse> {

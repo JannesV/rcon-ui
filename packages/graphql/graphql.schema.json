@@ -111,8 +111,8 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "OBJECT",
-                "name": "RconResponse",
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             },

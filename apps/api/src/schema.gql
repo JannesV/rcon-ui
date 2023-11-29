@@ -25,7 +25,7 @@ type Query {
 }
 
 type Mutation {
-  sendCommand(command: String!): RconResponse!
+  sendCommand(command: String!): Boolean!
 }
 
 type Subscription {

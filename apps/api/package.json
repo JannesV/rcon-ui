@@ -30,7 +30,7 @@
     "graphql-subscriptions": "^2.0.0",
     "immer": "^9.0.15",
     "rcon": "^1.1.0",
-    "rcon-srcds": "^2.0.2",
+    "rcon-srcds": "^2.1.0",
     "rxjs": "^7.5.7",
     "sabnzbd-api": "^1.5.0",
     "sharp": "^0.31.0",
